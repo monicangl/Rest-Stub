@@ -68,4 +68,17 @@ public class APISchema {
 
     APISchema() { // jpa only
     }
+
+    public boolean equals(Object obj) {
+        APISchema other = (APISchema)obj;
+        return this.method.equals(other.method)
+                && this.contextPath.compareToIgnoreCase(other.contextPath) == 0
+                && this.requestBody.equals(other.requestBody)
+                && this.headers.equals(other.headers)
+                && this.parameters.equals(other.parameters);
+    }
+
+    public int hashCode() {
+        return this.method.hashCode() * this.contextPath.hashCode() * this.requestBody.hashCode() * this.headers.hashCode() * this.parameters.hashCode();
+    }
 }
