@@ -2,7 +2,9 @@ package com.github.monicangl.reststub.controller;
 
 import com.github.monicangl.reststub.models.APISchema;
 import com.github.monicangl.reststub.services.APISchemaService;
+import com.github.monicangl.reststub.services.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,24 +27,46 @@ public class SchemaController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public APISchema get(@PathVariable Long id) {
-        return apiSchemaService.get(id);
+    public ResponseEntity<APISchema> get(@PathVariable Long id) {
+        try {
+            return new ResponseEntity<>(apiSchemaService.get(id), HttpStatus.OK);
+        }
+        catch (InvalidRequestException exception) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable Long id) {
-        apiSchemaService.delete(id);
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        try {
+            apiSchemaService.delete(id);
+        }
+        catch (EmptyResultDataAccessException exception) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<String> add(@RequestBody APISchema schema) {
-        apiSchemaService.add(schema);
+        try {
+            apiSchemaService.add(schema);
+        }
+        catch (InvalidRequestException exception) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<String> update(@RequestBody APISchema schema) {
-        apiSchemaService.update(schema);
+        try {
+            apiSchemaService.update(schema);
+        }
+        catch (InvalidRequestException exception) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

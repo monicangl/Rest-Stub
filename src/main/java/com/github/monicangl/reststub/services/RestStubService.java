@@ -30,7 +30,7 @@ public class RestStubService {
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest, String body) {
         APISchema schema = getSchema(getRequest(httpServletRequest, body));
         if (schema == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);

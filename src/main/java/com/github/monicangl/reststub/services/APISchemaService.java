@@ -35,21 +35,31 @@ public class APISchemaService {
     }
 
     public APISchema get(Long id) {
+        if (!apiSchemaRepository.exists(id)) {
+            throw new InvalidRequestException("Invalid request: get a non existed schema");
+        }
         return apiSchemaRepository.findOne(id);
     }
 
     public void add(APISchema schema) {
+        if (existing(schema)) {
+            throw new InvalidRequestException("Invalid request: add a existed schema");
+        }
         schema.requestBody = schema.requestBody.replace(" ", "");
         schema.requestBody = schema.requestBody.replace("/n", "");
-        //schema.contextPath = schema.contextPath.toLowerCase();
-        if (!existing(schema)) {
-            addSchema(schema);
-        }
+        addSchema(schema);
     }
 
     public void update(APISchema schema) {
+        if (!apiSchemaRepository.exists(schema.getId())) {
+            throw new InvalidRequestException("Invalid request: update a non existed schema");
+        }
         delete(schema.getId());
         addSchema(schema);
+    }
+
+    public void delete(Long id) {
+        apiSchemaRepository.delete(id);
     }
 
     private boolean existing(APISchema schema) {
@@ -71,9 +81,5 @@ public class APISchemaService {
         for (RequestHeader header : schema.getHeaders()) {
             requestHeaderRepository.save(new RequestHeader(apiSchema, header.name, header.value));
         }
-    }
-
-    public void delete(Long id) {
-        apiSchemaRepository.delete(id);
     }
 }
