@@ -58,7 +58,7 @@ public class APISchema {
 
     public APISchema(String method, String contextPath, String requestBody, HttpStatus responseStatus, String responseBody) {
         this.method = method;
-        this.contextPath = contextPath;//.toLowerCase();
+        this.contextPath = contextPath;
         this.requestBody = requestBody;
         this.responseStatus = responseStatus;
         this.responseBody = responseBody;

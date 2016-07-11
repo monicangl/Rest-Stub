@@ -11,8 +11,7 @@ public class APIRequest {
 
     public APIRequest(String method, String contextPath, Set<RequestParameter> parameters, Set<RequestHeader> headers, String requestBody) {
         this.method = method;
-        this.contextPath = contextPath;//.toLowerCase();
-//        this.contextPath = this.contextPath.toLowerCase();
+        this.contextPath = contextPath;
         this.parameters = parameters;
         this.headers = headers;
         this.requestBody = requestBody;
