@@ -50,6 +50,10 @@ public class APISchema {
         return responseBody;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String method;
     public String contextPath;
     public String requestBody;
