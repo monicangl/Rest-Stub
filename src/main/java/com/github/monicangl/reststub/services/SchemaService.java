@@ -14,11 +14,11 @@ import java.util.List;
 
 @Service
 @Transactional
-public class APISchemaService {
+public class SchemaService {
     private final SchemaRepository schemaRepository;
 
     @Autowired
-    public APISchemaService(SchemaRepository schemaRepository) {
+    public SchemaService(SchemaRepository schemaRepository) {
         this.schemaRepository = schemaRepository;
     }
 

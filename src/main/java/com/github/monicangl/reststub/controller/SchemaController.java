@@ -1,7 +1,7 @@
 package com.github.monicangl.reststub.controller;
 
 import com.github.monicangl.reststub.models.Schema;
-import com.github.monicangl.reststub.services.APISchemaService;
+import com.github.monicangl.reststub.services.SchemaService;
 import com.github.monicangl.reststub.services.exception.BadRequestException;
 import com.github.monicangl.reststub.services.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +14,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/schema")
 public class SchemaController {
-    private final APISchemaService apiSchemaService;
+    private final SchemaService schemaService;
 
     @Autowired
-    public SchemaController(APISchemaService apiSchemaService) {
-        this.apiSchemaService = apiSchemaService;
+    public SchemaController(SchemaService schemaService) {
+        this.schemaService = schemaService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Schema> getAll() {
-        return apiSchemaService.getAll();
+        return schemaService.getAll();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Schema> get(@PathVariable Long id) {
         try {
-            return new ResponseEntity<>(apiSchemaService.get(id), HttpStatus.OK);
+            return new ResponseEntity<>(schemaService.get(id), HttpStatus.OK);
         }
         catch (NotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -39,7 +39,7 @@ public class SchemaController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> delete(@PathVariable Long id) {
         try {
-            apiSchemaService.delete(id);
+            schemaService.delete(id);
         }
         catch (BadRequestException exception) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -51,7 +51,7 @@ public class SchemaController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<String> add(@RequestBody Schema schema) {
         try {
-            apiSchemaService.create(schema);
+            schemaService.create(schema);
         }
         catch (BadRequestException exception) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -62,7 +62,7 @@ public class SchemaController {
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<String> update(@RequestBody Schema schema) {
         try {
-            apiSchemaService.update(schema);
+            schemaService.update(schema);
         }
         catch (BadRequestException exception) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

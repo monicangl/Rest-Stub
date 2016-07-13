@@ -3,7 +3,7 @@ package com.github.monicangl.reststub.service;
 import com.github.monicangl.reststub.models.RequestHeader;
 import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.repositories.SchemaRepository;
-import com.github.monicangl.reststub.services.APISchemaService;
+import com.github.monicangl.reststub.services.SchemaService;
 import com.github.monicangl.reststub.services.exception.BadRequestException;
 import com.github.monicangl.reststub.services.exception.NotFoundException;
 import org.junit.Before;
@@ -24,9 +24,9 @@ import static org.mockito.Mockito.*;
 
 public class SchemaServiceTest {
     @Mock
-    private SchemaRepository apiSchemaRepository;
+    private SchemaRepository schemaRepository;
     @InjectMocks
-    private APISchemaService apiSchemaService;
+    private SchemaService schemaService;
 
     @Before
     public void setUp() {
@@ -38,10 +38,10 @@ public class SchemaServiceTest {
         // given
         Schema postSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        when(apiSchemaRepository.findAll()).thenReturn(newArrayList(postSchema));
+        when(schemaRepository.findAll()).thenReturn(newArrayList(postSchema));
 
         // when
-        List<Schema> schemas = apiSchemaService.getAll();
+        List<Schema> schemas = schemaService.getAll();
 
         // then
         assertThat(schemas.size(), is(1));
@@ -52,11 +52,11 @@ public class SchemaServiceTest {
         // given
         Schema postSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        when(apiSchemaRepository.exists(1L)).thenReturn(true);
-        when(apiSchemaRepository.findOne(1L)).thenReturn(postSchema);
+        when(schemaRepository.exists(1L)).thenReturn(true);
+        when(schemaRepository.findOne(1L)).thenReturn(postSchema);
 
         // when
-        Schema schema = apiSchemaService.get(1L);
+        Schema schema = schemaService.get(1L);
 
         // then
         assertThat(schema.getMethod(), is("POST"));
@@ -71,10 +71,10 @@ public class SchemaServiceTest {
     @Test(expected = NotFoundException.class)
     public void should_be_able_to_raise_not_found_exception_when_get_a_non_existent_schema() {
         // given
-        when(apiSchemaRepository.exists(1L)).thenReturn(false);
+        when(schemaRepository.exists(1L)).thenReturn(false);
 
         // when
-        apiSchemaService.get(1L);
+        schemaService.get(1L);
     }
 
     @Test
@@ -82,10 +82,10 @@ public class SchemaServiceTest {
         // given
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        when(apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody)).thenReturn(newHashSet());
+        when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody)).thenReturn(newHashSet());
 
         // when
-        apiSchemaService.create(schema);
+        schemaService.create(schema);
     }
 
     @Test(expected = BadRequestException.class)
@@ -93,10 +93,10 @@ public class SchemaServiceTest {
         // given
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        when(apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody)).thenReturn(newHashSet(schema));
+        when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody)).thenReturn(newHashSet(schema));
 
         // when
-        apiSchemaService.create(schema);
+        schemaService.create(schema);
     }
 
     @Test
@@ -105,10 +105,10 @@ public class SchemaServiceTest {
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         schema.setId(1L);
-        when(apiSchemaRepository.exists(1L)).thenReturn(true);
+        when(schemaRepository.exists(1L)).thenReturn(true);
 
         // when
-        apiSchemaService.update(schema);
+        schemaService.update(schema);
     }
 
     @Test(expected = BadRequestException.class)
@@ -117,26 +117,26 @@ public class SchemaServiceTest {
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         schema.setId(1L);
-        when(apiSchemaRepository.exists(1L)).thenReturn(false);
+        when(schemaRepository.exists(1L)).thenReturn(false);
 
         // when
-        apiSchemaService.update(schema);
+        schemaService.update(schema);
     }
 
     @Test
     public void should_be_able_to_delete_an_existent_schema() {
         // given
-        doNothing().when(apiSchemaRepository).delete(1L);
+        doNothing().when(schemaRepository).delete(1L);
         // when
-        apiSchemaService.delete(1L);
+        schemaService.delete(1L);
     }
 
     @Test(expected = BadRequestException.class)
     public void should_be_able_to_raise_bad_request_exception_when_delete_a_non_existent_schema() {
         // given
-        doThrow(new EmptyResultDataAccessException(1)).when(apiSchemaRepository).delete(1L);
+        doThrow(new EmptyResultDataAccessException(1)).when(schemaRepository).delete(1L);
 
         // when
-        apiSchemaService.delete(1L);
+        schemaService.delete(1L);
     }
 }
