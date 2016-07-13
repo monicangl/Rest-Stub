@@ -1,15 +1,8 @@
 package com.github.monicangl.reststub.services;
 
-import com.github.monicangl.reststub.models.Request;
-import com.github.monicangl.reststub.models.Schema;
-import com.github.monicangl.reststub.models.RequestHeader;
-import com.github.monicangl.reststub.models.RequestParameter;
+import com.github.monicangl.reststub.models.*;
 import com.github.monicangl.reststub.repositories.SchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,14 +20,9 @@ public class RestStubService {
         this.apiSchemaRepository = apiSchemaRepository;
     }
 
-    public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest, String body) {
+    public Response handleRequest(HttpServletRequest httpServletRequest, String body) {
         Schema schema = getSchema(getRequest(httpServletRequest, body));
-        if (schema == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(schema.getResponseBody(), httpHeaders, schema.getResponseStatus());
+        return schema == null ? null : new Response(schema.getResponseBody(), schema.getResponseStatus());
     }
 
     private Schema getSchema(Request request) {

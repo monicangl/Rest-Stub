@@ -1,7 +1,11 @@
 package com.github.monicangl.reststub.controller;
 
+import com.github.monicangl.reststub.models.Response;
 import com.github.monicangl.reststub.services.RestStubService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +26,23 @@ public class RestStubController {
 
     @RequestMapping(value = "/**", method = {RequestMethod.POST, RequestMethod.PUT})
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest, @RequestBody String body) {
-        return restStubService.handleRequest(httpServletRequest, body);
+        Response response = restStubService.handleRequest(httpServletRequest, body);
+        if (null == response) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(response.responseBody, httpHeaders, response.responseStatus);
     }
 
     @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.DELETE})
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest) {
-        return restStubService.handleRequest(httpServletRequest, "");
+        Response response = restStubService.handleRequest(httpServletRequest, "");
+        if (null == response) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(response.responseBody, httpHeaders, response.responseStatus);
     }
-
-
 }

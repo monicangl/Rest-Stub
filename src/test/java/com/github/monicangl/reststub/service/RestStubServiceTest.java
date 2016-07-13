@@ -1,6 +1,7 @@
 package com.github.monicangl.reststub.service;
 
 import com.github.monicangl.reststub.models.RequestHeader;
+import com.github.monicangl.reststub.models.Response;
 import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.repositories.SchemaRepository;
 import com.github.monicangl.reststub.services.RestStubService;
@@ -10,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -56,11 +56,11 @@ public class RestStubServiceTest {
         when(apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}")).thenReturn(newHashSet(schema));
 
         // when
-        ResponseEntity<String> responseEntity = restStubService.handleRequest(httpServletRequest, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        Response response = restStubService.handleRequest(httpServletRequest, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
 
         // then
-        assertThat(responseEntity.<String>getBody(), is(schema.getResponseBody()));
-        assertThat(responseEntity.getStatusCode(), is(schema.getResponseStatus()));
+        assertThat(response.responseBody, is(schema.getResponseBody()));
+        assertThat(response.responseStatus, is(schema.getResponseStatus()));
     }
 
     @Test
@@ -87,9 +87,9 @@ public class RestStubServiceTest {
         when(apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}")).thenReturn(newHashSet());
 
         // when
-        ResponseEntity<String> responseEntity = restStubService.handleRequest(httpServletRequest, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        Response response = restStubService.handleRequest(httpServletRequest, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
 
         // then
-        assertThat(responseEntity.getStatusCode(), is(HttpStatus.NOT_FOUND));
+//        assertThat(response, isNull());
     }
 }

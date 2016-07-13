@@ -1,5 +1,6 @@
 package com.github.monicangl.reststub.controller;
 
+import com.github.monicangl.reststub.models.Response;
 import com.github.monicangl.reststub.services.RestStubService;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,10 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -37,10 +35,8 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_ok_and_response_resource_when_receive_valid_http_get_request() throws Exception {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         when(restStubService.handleRequest(Mockito.any(), eq(""))).thenReturn(
-                new ResponseEntity<>("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", httpHeaders, HttpStatus.OK));
+                new Response("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.OK));
         mockMvc.perform(get("/stubs/user")
                 .param("name", "user1"))
                 .andExpect(status().isOk())
@@ -52,8 +48,7 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_receive_invalid_http_get_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq(""))).thenReturn(
-                new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        when(restStubService.handleRequest(Mockito.any(), eq(""))).thenReturn(null);
         mockMvc.perform(get("/stubs/1")
                 .param("name", "user1"))
                 .andExpect(status().isNotFound());
@@ -61,8 +56,8 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_ok_when_receive_valid_http_post_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}"))).thenReturn(
-                new ResponseEntity<>(HttpStatus.OK));
+        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}")))
+                .thenReturn(new Response("", HttpStatus.OK));
         mockMvc.perform(post("/stubs/user")
                 .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}"))
                 .andExpect(status().isOk());
@@ -70,8 +65,7 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_receive_invalid_http_post_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(
-                new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(null);
         mockMvc.perform(post("/stubs/1")
                 .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))
                 .andExpect(status().isNotFound());
@@ -80,7 +74,7 @@ public class RestStubControllerTest {
     @Test
     public void should_be_able_to_return_ok_when_receive_valid_http_put_request() throws Exception {
         when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(
-                new ResponseEntity<>(HttpStatus.OK));
+                new Response("", HttpStatus.OK));
         mockMvc.perform(put("/stubs/user")
                 .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))
                 .andExpect(status().isOk());
@@ -88,8 +82,7 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_receive_invalid_http_put_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(
-                new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(null);
         mockMvc.perform(put("/stubs/user")
                 .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))
                 .andExpect(status().isNotFound());
@@ -97,17 +90,15 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_ok_when_receive_valid_http_delete_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(
-                new ResponseEntity<>(HttpStatus.OK));
-        mockMvc.perform(delete("/stubs/user/name")
-                .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))
+        when(restStubService.handleRequest(Mockito.any(), eq("")))
+                .thenReturn(new Response("", HttpStatus.OK));
+        mockMvc.perform(delete("/stubs/user/name"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void should_be_able_to_return_not_found_when_receive_invalid_http_delete_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq(""))).thenReturn(
-                new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        when(restStubService.handleRequest(Mockito.any(), eq(""))).thenReturn(null);
         mockMvc.perform(delete("/stubs/user"))
                 .andExpect(status().isNotFound());
     }
