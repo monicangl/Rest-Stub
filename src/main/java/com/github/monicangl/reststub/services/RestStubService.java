@@ -7,6 +7,7 @@ import com.github.monicangl.reststub.repositories.SchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -19,8 +20,11 @@ public class RestStubService {
     }
 
     public Response handleRequest(Request request) {
-        Schema schema = getSchema(request);
-        return schema == null ? null : new Response(schema.getResponseBody(), schema.getResponseStatus());
+        Optional<Schema> schema = Optional.ofNullable(getSchema(request));
+        if (schema.isPresent()) {
+            return new Response(schema.get().getResponseBody(), schema.get().getResponseStatus());
+        }
+        return null;
     }
 
     private Schema getSchema(Request request) {

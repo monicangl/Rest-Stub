@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,11 +28,11 @@ public class SchemaService {
     }
 
     public Schema get(Long id) {
-        Schema schema = schemaRepository.findOne(id);
-        if (null == schema) {
-            throw new NotFoundException("Requested schema is not found");
+        Optional<Schema> schema = Optional.ofNullable(schemaRepository.findOne(id));
+        if (schema.isPresent()){
+            return schema.get();
         }
-        return schema;
+        throw new NotFoundException("Requested schema is not found");
     }
 
     public Long create(Schema schema) {

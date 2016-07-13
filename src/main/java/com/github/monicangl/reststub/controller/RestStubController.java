@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/stubs")
@@ -27,23 +28,24 @@ public class RestStubController {
 
     @RequestMapping(value = "/**", method = {RequestMethod.POST, RequestMethod.PUT})
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest, @RequestBody String body) {
-        Response response = restStubService.handleRequest(ServletService.getRequest(httpServletRequest, body));
-        if (null == response) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Response> response = Optional.ofNullable(restStubService.handleRequest(ServletService.getRequest(httpServletRequest, body)));
+        if (response.isPresent()) {
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            return new ResponseEntity<>(response.get().responseBody, httpHeaders, response.get().responseStatus);
         }
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(response.responseBody, httpHeaders, response.responseStatus);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
     @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.DELETE})
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest) {
-        Response response = restStubService.handleRequest(ServletService.getRequest(httpServletRequest, ""));
-        if (null == response) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Response> response = Optional.ofNullable(restStubService.handleRequest(ServletService.getRequest(httpServletRequest, "")));
+        if (response.isPresent()) {
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            return new ResponseEntity<>(response.get().responseBody, httpHeaders, response.get().responseStatus);
         }
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(response.responseBody, httpHeaders, response.responseStatus);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
