@@ -52,7 +52,6 @@ public class SchemaServiceTest {
         // given
         Schema postSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        when(schemaRepository.exists(1L)).thenReturn(true);
         when(schemaRepository.findOne(1L)).thenReturn(postSchema);
 
         // when
@@ -71,7 +70,7 @@ public class SchemaServiceTest {
     @Test(expected = NotFoundException.class)
     public void should_be_able_to_raise_not_found_exception_when_get_a_non_existent_schema() {
         // given
-        when(schemaRepository.exists(1L)).thenReturn(false);
+        when(schemaRepository.findOne(1L)).thenReturn(null);
 
         // when
         schemaService.get(1L);

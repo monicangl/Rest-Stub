@@ -27,10 +27,11 @@ public class SchemaService {
     }
 
     public Schema get(Long id) {
-        if (!schemaRepository.exists(id)) {
+        Schema schema = schemaRepository.findOne(id);
+        if (null == schema) {
             throw new NotFoundException("Requested schema is not found");
         }
-        return schemaRepository.findOne(id);
+        return schema;
     }
 
     public Long create(Schema schema) {
