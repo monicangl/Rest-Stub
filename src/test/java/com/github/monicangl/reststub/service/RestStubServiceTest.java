@@ -1,8 +1,8 @@
 package com.github.monicangl.reststub.service;
 
-import com.github.monicangl.reststub.models.APISchema;
+import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.models.RequestHeader;
-import com.github.monicangl.reststub.repositories.APISchemaRepository;
+import com.github.monicangl.reststub.repositories.SchemaRepository;
 import com.github.monicangl.reststub.services.RestStubService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,14 +24,14 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RestStubServiceTest {
     @Mock
-    private APISchemaRepository apiSchemaRepository;
+    private SchemaRepository apiSchemaRepository;
     @InjectMocks
     private RestStubService restStubService;
 
     @Test
     public void should_be_able_to_return_right_response_when_handle_a_supported_request() {
         // given
-        APISchema schema = new APISchema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader(schema, "content-type", "application/json"));
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getMethod()).thenReturn("POST");
@@ -62,7 +62,7 @@ public class RestStubServiceTest {
     @Test
     public void should_be_able_to_return_not_found_when_handle_an_unsupported_request() {
         // given
-        APISchema schema = new APISchema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader(schema, "content-type", "application/json"));
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getMethod()).thenReturn("POST");

@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 public class RequestParameter {
     @JsonIgnore
     @ManyToOne
-    private APISchema schema;
+    private Schema schema;
 
     @Id
     @GeneratedValue
@@ -21,7 +21,7 @@ public class RequestParameter {
     RequestParameter() { // jpa only
     }
 
-    public RequestParameter(APISchema schema, String name, String value) {
+    public RequestParameter(Schema schema, String name, String value) {
         this.schema = schema;
         this.name = name;
         this.value = value;
@@ -34,7 +34,7 @@ public class RequestParameter {
         return id;
     }
 
-    public APISchema getSchema() {
+    public Schema getSchema() {
         return schema;
     }
 

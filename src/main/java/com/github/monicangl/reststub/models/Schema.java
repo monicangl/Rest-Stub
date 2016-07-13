@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class APISchema {
+public class Schema {
     @OneToMany(mappedBy = "schema", cascade = CascadeType.REMOVE)
     private Set<RequestParameter> parameters = new HashSet<>();
 
@@ -60,7 +60,7 @@ public class APISchema {
     public HttpStatus responseStatus;
     public String responseBody;
 
-    public APISchema(String method, String contextPath, String requestBody, HttpStatus responseStatus, String responseBody) {
+    public Schema(String method, String contextPath, String requestBody, HttpStatus responseStatus, String responseBody) {
         this.method = method;
         this.contextPath = contextPath;
         this.requestBody = requestBody;
@@ -70,11 +70,11 @@ public class APISchema {
         this.requestBody = this.requestBody.replace("\n","");
     }
 
-    APISchema() { // jpa only
+    Schema() { // jpa only
     }
 
     public boolean equals(Object obj) {
-        APISchema other = (APISchema)obj;
+        Schema other = (Schema)obj;
         return this.method.equals(other.method)
                 && this.contextPath.compareToIgnoreCase(other.contextPath) == 0
                 && this.requestBody.equals(other.requestBody)

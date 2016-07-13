@@ -1,10 +1,10 @@
 package com.github.monicangl.reststub.services;
 
-import com.github.monicangl.reststub.models.APIRequest;
-import com.github.monicangl.reststub.models.APISchema;
+import com.github.monicangl.reststub.models.Request;
+import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.models.RequestHeader;
 import com.github.monicangl.reststub.models.RequestParameter;
-import com.github.monicangl.reststub.repositories.APISchemaRepository;
+import com.github.monicangl.reststub.repositories.SchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,15 +20,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class RestStubService {
-    private final APISchemaRepository apiSchemaRepository;
+    private final SchemaRepository apiSchemaRepository;
 
     @Autowired
-    public RestStubService(APISchemaRepository apiSchemaRepository) {
+    public RestStubService(SchemaRepository apiSchemaRepository) {
         this.apiSchemaRepository = apiSchemaRepository;
     }
 
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest, String body) {
-        APISchema schema = getSchema(getRequest(httpServletRequest, body));
+        Schema schema = getSchema(getRequest(httpServletRequest, body));
         if (schema == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -37,9 +37,9 @@ public class RestStubService {
         return new ResponseEntity<>(schema.getResponseBody(), httpHeaders, schema.getResponseStatus());
     }
 
-    private APISchema getSchema(APIRequest request) {
-        Set<APISchema> schemas = apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(request.method, request.contextPath, request.requestBody);
-        for (APISchema schema : schemas) {
+    private Schema getSchema(Request request) {
+        Set<Schema> schemas = apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(request.method, request.contextPath, request.requestBody);
+        for (Schema schema : schemas) {
             if (schema.getParameters().equals(request.parameters)) {
                 if (request.headers.containsAll(schema.getHeaders())) {
                     return schema;
@@ -49,7 +49,7 @@ public class RestStubService {
         return null;
     }
 
-    private APIRequest getRequest(HttpServletRequest httpServletRequest, String body) {
+    private Request getRequest(HttpServletRequest httpServletRequest, String body) {
         Set<RequestParameter> parameters = new HashSet<>();
         parameters.addAll(httpServletRequest.getParameterMap().keySet().stream().map(key -> new RequestParameter(null, key, httpServletRequest.getParameter(key))).collect(Collectors.toList()));
         Set<RequestHeader> headers = new HashSet<>();
@@ -58,6 +58,6 @@ public class RestStubService {
             String key = requestHeaders.nextElement();
             headers.add(new RequestHeader(null, key, httpServletRequest.getHeader(key)));
         }
-        return new APIRequest(httpServletRequest.getMethod(), httpServletRequest.getRequestURI(), parameters, headers, body);
+        return new Request(httpServletRequest.getMethod(), httpServletRequest.getRequestURI(), parameters, headers, body);
     }
 }

@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 public class RequestHeader {
     @JsonIgnore
     @ManyToOne
-    private APISchema schema;
+    private Schema schema;
 
     @Id
     @GeneratedValue
@@ -22,7 +22,7 @@ public class RequestHeader {
     RequestHeader() { // jpa only
     }
 
-    public RequestHeader(APISchema schema, String name, String value) {
+    public RequestHeader(Schema schema, String name, String value) {
         this.schema = schema;
         this.name = name;
         this.value = value;
@@ -35,7 +35,7 @@ public class RequestHeader {
         return id;
     }
 
-    public APISchema getSchema() {
+    public Schema getSchema() {
         return schema;
     }
 

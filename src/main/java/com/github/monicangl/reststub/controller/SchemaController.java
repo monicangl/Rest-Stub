@@ -1,6 +1,6 @@
 package com.github.monicangl.reststub.controller;
 
-import com.github.monicangl.reststub.models.APISchema;
+import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.services.APISchemaService;
 import com.github.monicangl.reststub.services.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +22,12 @@ public class SchemaController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<APISchema> getAll() {
+    public List<Schema> getAll() {
         return apiSchemaService.getAll();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<APISchema> get(@PathVariable Long id) {
+    public ResponseEntity<Schema> get(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(apiSchemaService.get(id), HttpStatus.OK);
         }
@@ -49,9 +49,9 @@ public class SchemaController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<String> add(@RequestBody APISchema schema) {
+    public ResponseEntity<String> add(@RequestBody Schema schema) {
         try {
-            apiSchemaService.add(schema);
+            apiSchemaService.create(schema);
         }
         catch (InvalidRequestException exception) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -60,7 +60,7 @@ public class SchemaController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<String> update(@RequestBody APISchema schema) {
+    public ResponseEntity<String> update(@RequestBody Schema schema) {
         try {
             apiSchemaService.update(schema);
         }
