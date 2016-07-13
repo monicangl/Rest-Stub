@@ -20,15 +20,18 @@ import java.util.Optional;
 @RequestMapping("/stubs")
 public class RestStubController {
     private final RestStubService restStubService;
+    private final ServletService servletService;
 
     @Autowired
-    public RestStubController(RestStubService restStubService) {
+    public RestStubController(RestStubService restStubService, ServletService servletService) {
         this.restStubService = restStubService;
+        this.servletService = servletService;
     }
 
     @RequestMapping(value = "/**", method = {RequestMethod.POST, RequestMethod.PUT})
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest, @RequestBody String body) {
-        Optional<Response> response = Optional.ofNullable(restStubService.handleRequest(ServletService.getRequest(httpServletRequest, body)));
+        Response aa = restStubService.handleRequest(servletService.getRequest(httpServletRequest, body));
+        Optional<Response> response = Optional.ofNullable(aa);
         if (response.isPresent()) {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -40,7 +43,7 @@ public class RestStubController {
 
     @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.DELETE})
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest) {
-        Optional<Response> response = Optional.ofNullable(restStubService.handleRequest(ServletService.getRequest(httpServletRequest, "")));
+        Optional<Response> response = Optional.ofNullable(restStubService.handleRequest(servletService.getRequest(httpServletRequest, "")));
         if (response.isPresent()) {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);

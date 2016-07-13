@@ -3,6 +3,7 @@ package com.github.monicangl.reststub.services;
 import com.github.monicangl.reststub.models.Request;
 import com.github.monicangl.reststub.models.RequestHeader;
 import com.github.monicangl.reststub.models.RequestParameter;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +12,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 public class ServletService {
-    public static Request getRequest(HttpServletRequest httpServletRequest, String body) {
+    public Request getRequest(HttpServletRequest httpServletRequest, String body) {
         Set<RequestParameter> parameters = new HashSet<>();
         parameters.addAll(httpServletRequest.getParameterMap().keySet().stream()
                 .map(key -> new RequestParameter(key, httpServletRequest.getParameter(key))).collect(Collectors.toList()));
@@ -25,7 +27,7 @@ public class ServletService {
         return new Request(getMethod(httpServletRequest.getMethod()), httpServletRequest.getRequestURI(), parameters, headers, body);
     }
 
-    private static RequestMethod getMethod(String method) {
+    private RequestMethod getMethod(String method) {
         switch (method) {
             case "POST":
                 return RequestMethod.POST;

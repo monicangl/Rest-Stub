@@ -4,7 +4,10 @@ import com.github.monicangl.reststub.models.Request;
 import com.github.monicangl.reststub.models.RequestHeader;
 import com.github.monicangl.reststub.models.RequestParameter;
 import com.github.monicangl.reststub.services.ServletService;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +22,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ServletServiceTest {
+    @InjectMocks
+    private  ServletService servletService;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void should_be_able_to_return_request_when_get_request_from_http_servlet_request_and_request_body() {
         // given
@@ -46,7 +57,7 @@ public class ServletServiceTest {
         String requestBody = "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}";
 
         // when
-        Request request = ServletService.getRequest(httpServletRequest, requestBody);
+        Request request = servletService.getRequest(httpServletRequest, requestBody);
 
         // then
         assertThat(request.method, is(RequestMethod.POST));
