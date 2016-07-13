@@ -1,4 +1,4 @@
-package com.github.monicangl.reststub.controller;
+package com.github.monicangl.reststub.service;
 
 import com.github.monicangl.reststub.models.APISchema;
 import com.github.monicangl.reststub.models.RequestHeader;
@@ -8,13 +8,13 @@ import com.github.monicangl.reststub.repositories.RequestHeaderRepository;
 import com.github.monicangl.reststub.repositories.RequestParameterRepository;
 import com.github.monicangl.reststub.services.APISchemaService;
 import com.github.monicangl.reststub.services.InvalidRequestException;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
@@ -22,20 +22,22 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 public class SchemaServceTest {
     @Mock
-    APISchemaRepository apiSchemaRepository;
+    private APISchemaRepository apiSchemaRepository;
     @Mock
-    RequestParameterRepository requestParameterRepository;
+    private RequestParameterRepository requestParameterRepository;
     @Mock
-    RequestHeaderRepository requestHeaderRepository;
+    private RequestHeaderRepository requestHeaderRepository;
     @InjectMocks
-    APISchemaService apiSchemaService;
+    private APISchemaService apiSchemaService;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void should_be_able_to_return_all_schemas_when_get_all_schemas() {
@@ -68,7 +70,7 @@ public class SchemaServceTest {
     }
 
     @Test
-    public void should_be_able_to_return_the_schema_when_get_a_schema_with_a_specified_id_and_the_schema_is_existent() {
+    public void should_be_able_to_return_the_schema_when_get_an_existent_schema() {
         // given
         APISchema postSchema = new APISchema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader(postSchema, "content-type", "application/json"));
@@ -89,12 +91,12 @@ public class SchemaServceTest {
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void should_be_able_to_raise_exception_when_get_a_schema_with_a_specified_id_and_the_schema_is_not_existent() {
+    public void should_be_able_to_raise_exception_when_get_a_non_existent_schema() {
         // given
         when(apiSchemaRepository.exists(1L)).thenReturn(false);
 
         // when
-        APISchema schema = apiSchemaService.get(1L);
+        apiSchemaService.get(1L);
     }
 
     @Test

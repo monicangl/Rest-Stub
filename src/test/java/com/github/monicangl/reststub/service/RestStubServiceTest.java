@@ -1,4 +1,4 @@
-package com.github.monicangl.reststub.controller;
+package com.github.monicangl.reststub.service;
 
 import com.github.monicangl.reststub.models.APISchema;
 import com.github.monicangl.reststub.models.RequestHeader;
