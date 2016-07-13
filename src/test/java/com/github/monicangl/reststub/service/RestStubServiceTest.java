@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 public class RestStubServiceTest {
     @Mock
-    private SchemaRepository apiSchemaRepository;
+    private SchemaRepository schemaRepository;
     @InjectMocks
     private RestStubService restStubService;
 
@@ -39,8 +39,8 @@ public class RestStubServiceTest {
         Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.setHeaders(headers);
         Request request = new Request(RequestMethod.POST, "/stubs/user", newHashSet(), headers, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
-        when(apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(
-                RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}"))
+        when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(
+                request.method, request.contextPath, request.requestBody))
                 .thenReturn(newHashSet(schema));
 
         // when
@@ -54,11 +54,9 @@ public class RestStubServiceTest {
     @Test
     public void should_be_able_to_return_not_found_when_handle_an_unsupported_request() {
         // given
-        Set<RequestHeader> headers = newHashSet(new RequestHeader("content-type", "application/json"));
-        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
-        schema.setHeaders(headers);
-        Request request = new Request(RequestMethod.POST, "/stubs/user", newHashSet(), headers, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
-
+        Request request = new Request(RequestMethod.POST, "/stubs/user", newHashSet(), newHashSet(), "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(
+                request.method, request.contextPath, request.requestBody)).thenReturn(newHashSet());
         // when
         Response response = restStubService.handleRequest(request);
 

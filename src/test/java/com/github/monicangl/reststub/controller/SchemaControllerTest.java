@@ -23,8 +23,7 @@ import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -106,6 +105,7 @@ public class SchemaControllerTest {
     public void should_be_able_return_created_when_add_a_non_existent_schema() throws Exception {
         Schema postSchema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
+        when(schemaService.create(Mockito.any())).thenReturn(1L);
         mockMvc.perform(post("/schema")
                 .header("content-type", "application/json")
                 .content(json(postSchema)))
@@ -125,27 +125,29 @@ public class SchemaControllerTest {
 
     @Test
     public void should_be_able_return_ok_when_update_an_existent_schema() throws Exception {
-        Schema getSchema = new Schema(RequestMethod.GET, "/stubs/user", "", HttpStatus.OK, "{\n    \"name\": \"user1\",\n    \"password\": \"123456\",   \n    \"age\": 10\n}");
-        getSchema.getParameters().add(new RequestParameter("name", "user1"));
+        Schema schema = new Schema(RequestMethod.GET, "/stubs/user", "", HttpStatus.OK, "{\n    \"name\": \"user1\",\n    \"password\": \"123456\",   \n    \"age\": 10\n}");
+        schema.getParameters().add(new RequestParameter("name", "user1"));
+        doNothing().when(schemaService).update(schema);
         mockMvc.perform(put("/schema")
                 .header("content-type", "application/json")
-                .content(json(getSchema)))
+                .content(json(schema)))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void should_be_able_return_bad_request_when_update_an_non_existent_schema() throws Exception {
-        Schema postSchema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
-        postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
+        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         doThrow(new BadRequestException("")).when(schemaService).update(Mockito.any());
         mockMvc.perform(put("/schema")
                 .header("content-type", "application/json")
-                .content(json(postSchema)))
+                .content(json(schema)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void should_be_able_return_ok_when_delete_an_existent_schema() throws Exception {
+        doNothing().when(schemaService).delete(1L);
         mockMvc.perform(delete("/schema/1"))
                 .andExpect(status().isOk());
     }

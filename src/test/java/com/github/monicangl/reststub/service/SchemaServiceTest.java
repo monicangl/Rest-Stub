@@ -98,7 +98,8 @@ public class SchemaServiceTest {
         // given
         Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody)).thenReturn(newHashSet(schema));
+        when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(
+                schema.method, schema.contextPath, schema.requestBody)).thenReturn(newHashSet(schema));
 
         // when
         schemaService.create(schema);
