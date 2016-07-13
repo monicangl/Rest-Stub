@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class SchemaServiceTest {
     @Test
     public void should_be_able_to_return_all_schemas_when_get_all_schemas() {
         // given
-        Schema postSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema postSchema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         when(schemaRepository.findAll()).thenReturn(newArrayList(postSchema));
 
@@ -50,7 +51,7 @@ public class SchemaServiceTest {
     @Test
     public void should_be_able_to_return_the_schema_when_get_an_existent_schema() {
         // given
-        Schema postSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema postSchema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         when(schemaRepository.findOne(1L)).thenReturn(postSchema);
 
@@ -58,7 +59,7 @@ public class SchemaServiceTest {
         Schema schema = schemaService.get(1L);
 
         // then
-        assertThat(schema.getMethod(), is("POST"));
+        assertThat(schema.getMethod(), is(RequestMethod.POST));
         assertThat(schema.getContextPath(), is("/stubs/user"));
         assertThat(schema.getParameters(), is(newHashSet()));
         assertThat(schema.getHeaders(), is(newHashSet(new RequestHeader("content-type", "application/json"))));
@@ -79,7 +80,7 @@ public class SchemaServiceTest {
     @Test
     public void should_be_able_to_create_a_non_existent_schema() {
         // given
-        Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         schema.setId(1L);
         when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody)).thenReturn(newHashSet());
@@ -95,7 +96,7 @@ public class SchemaServiceTest {
     @Test(expected = BadRequestException.class)
     public void should_be_able_to_raise_bad_request_exception_when_create_an_existent_schema() {
         // given
-        Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody)).thenReturn(newHashSet(schema));
 
@@ -106,7 +107,7 @@ public class SchemaServiceTest {
     @Test
     public void should_be_able_to_update_an_existent_schema() {
         // given
-        Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         schema.setId(1L);
         when(schemaRepository.exists(1L)).thenReturn(true);
@@ -118,7 +119,7 @@ public class SchemaServiceTest {
     @Test(expected = BadRequestException.class)
     public void should_be_able_to_raise_bad_request_exception_when_update_a_non_existent_schema() {
         // given
-        Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         schema.setId(1L);
         when(schemaRepository.exists(1L)).thenReturn(false);
@@ -130,7 +131,7 @@ public class SchemaServiceTest {
     @Test
     public void should_be_able_to_update_an_existent_schema_same_to_itself() {
         // given
-        Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         schema.setId(1L);
         when(schemaRepository.exists(1L)).thenReturn(true);
@@ -145,10 +146,10 @@ public class SchemaServiceTest {
     @Test(expected = BadRequestException.class)
     public void should_be_able_to_raise_bad_request_exception_when_update_an_existent_schema_same_to_another_existent_schema() {
         // given
-        Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         schema.setId(1L);
-        Schema anotherSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema anotherSchema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         schema.setId(2L);
         when(schemaRepository.exists(1L)).thenReturn(true);

@@ -5,6 +5,7 @@ import com.github.monicangl.reststub.models.RequestHeader;
 import com.github.monicangl.reststub.models.RequestParameter;
 import com.github.monicangl.reststub.services.ServletService;
 import org.junit.Test;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -48,7 +49,7 @@ public class ServletServiceTest {
         Request request = ServletService.getRequest(httpServletRequest, requestBody);
 
         // then
-        assertThat(request.method, is("POST"));
+        assertThat(request.method, is(RequestMethod.POST));
         assertThat(request.contextPath, is("/stubs/user"));
         assertThat(request.parameters, is(newHashSet(new RequestParameter("name", "user1"))));
         assertThat(request.headers, is(newHashSet(new RequestHeader("content-type", "application/json"))));
