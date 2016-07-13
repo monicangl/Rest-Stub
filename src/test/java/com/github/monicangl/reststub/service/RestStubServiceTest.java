@@ -1,5 +1,6 @@
 package com.github.monicangl.reststub.service;
 
+import com.github.monicangl.reststub.models.Request;
 import com.github.monicangl.reststub.models.RequestHeader;
 import com.github.monicangl.reststub.models.Response;
 import com.github.monicangl.reststub.models.Schema;
@@ -12,13 +13,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
+import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RestStubServiceTest {
@@ -35,28 +34,16 @@ public class RestStubServiceTest {
     @Test
     public void should_be_able_to_return_right_response_when_handle_a_supported_request() {
         // given
+        Set<RequestHeader> headers = newHashSet(new RequestHeader("content-type", "application/json"));
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
-        schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
-        when(httpServletRequest.getMethod()).thenReturn("POST");
-        when(httpServletRequest.getRequestURI()).thenReturn("/stubs/user");
-        when(httpServletRequest.getHeaderNames()).thenReturn(new Enumeration<String>() {
-            private boolean hasNextElement = true;
-
-            public boolean hasMoreElements() {
-                return hasNextElement;
-            }
-
-            public String nextElement() {
-                hasNextElement = false;
-                return "content-type";
-            }
-        });
-        when(httpServletRequest.getHeader("content-type")).thenReturn("application/json");
-        when(apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}")).thenReturn(newHashSet(schema));
+        schema.setHeaders(headers);
+        Request request = new Request("POST", "/stubs/user", newHashSet(), headers, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        when(apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(
+                "POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}"))
+                .thenReturn(newHashSet(schema));
 
         // when
-        Response response = restStubService.handleRequest(httpServletRequest, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        Response response = restStubService.handleRequest(request);
 
         // then
         assertThat(response.responseBody, is(schema.getResponseBody()));
@@ -66,28 +53,13 @@ public class RestStubServiceTest {
     @Test
     public void should_be_able_to_return_not_found_when_handle_an_unsupported_request() {
         // given
+        Set<RequestHeader> headers = newHashSet(new RequestHeader("content-type", "application/json"));
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
-        schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
-        when(httpServletRequest.getMethod()).thenReturn("POST");
-        when(httpServletRequest.getRequestURI()).thenReturn("/stubs/user");
-        when(httpServletRequest.getHeaderNames()).thenReturn(new Enumeration<String>() {
-            private boolean hasNextElement = true;
-
-            public boolean hasMoreElements() {
-                return hasNextElement;
-            }
-
-            public String nextElement() {
-                hasNextElement = false;
-                return "content-type";
-            }
-        });
-        when(httpServletRequest.getHeader("content-type")).thenReturn("application/json");
-        when(apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}")).thenReturn(newHashSet());
+        schema.setHeaders(headers);
+        Request request = new Request("POST", "/stubs/user", newHashSet(), headers, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
 
         // when
-        Response response = restStubService.handleRequest(httpServletRequest, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        Response response = restStubService.handleRequest(request);
 
         // then
 //        assertThat(response, isNull());

@@ -1,5 +1,7 @@
 package com.github.monicangl.reststub.controller;
 
+import com.github.monicangl.reststub.models.Request;
+import com.github.monicangl.reststub.models.RequestParameter;
 import com.github.monicangl.reststub.models.Response;
 import com.github.monicangl.reststub.services.RestStubService;
 import org.junit.Before;
@@ -7,11 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -35,7 +37,8 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_ok_and_response_resource_when_receive_valid_http_get_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq(""))).thenReturn(
+        Request request = new Request("GET", "/stubs/user", newHashSet(new RequestParameter("name", "user1")), newHashSet(), "");
+        when(restStubService.handleRequest(eq(request))).thenReturn(
                 new Response("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.OK));
         mockMvc.perform(get("/stubs/user")
                 .param("name", "user1"))
@@ -48,7 +51,8 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_receive_invalid_http_get_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq(""))).thenReturn(null);
+        Request request = new Request("GET", "/stubs/1", newHashSet(new RequestParameter("name", "user1")), newHashSet(), "");
+        when(restStubService.handleRequest(eq(request))).thenReturn(null);
         mockMvc.perform(get("/stubs/1")
                 .param("name", "user1"))
                 .andExpect(status().isNotFound());
@@ -56,8 +60,9 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_ok_when_receive_valid_http_post_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}")))
-                .thenReturn(new Response("", HttpStatus.OK));
+        Request request = new Request("POST", "/stubs/user", newHashSet(), newHashSet(), "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+
+        when(restStubService.handleRequest(eq(request))).thenReturn(new Response("", HttpStatus.OK));
         mockMvc.perform(post("/stubs/user")
                 .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}"))
                 .andExpect(status().isOk());
@@ -65,15 +70,17 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_receive_invalid_http_post_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(null);
+        Request request = new Request("POST", "/stubs/1", newHashSet(), newHashSet(), "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        when(restStubService.handleRequest(eq((request)))).thenReturn(null);
         mockMvc.perform(post("/stubs/1")
-                .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))
+                .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void should_be_able_to_return_ok_when_receive_valid_http_put_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(
+        Request request = new Request("PUT", "/stubs/user", newHashSet(), newHashSet(), "{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}");
+        when(restStubService.handleRequest(eq((request)))).thenReturn(
                 new Response("", HttpStatus.OK));
         mockMvc.perform(put("/stubs/user")
                 .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))
@@ -82,7 +89,8 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_receive_invalid_http_put_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))).thenReturn(null);
+        Request request = new Request("PUT", "/stubs/user", newHashSet(), newHashSet(), "{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}");
+        when(restStubService.handleRequest(eq(request))).thenReturn(null);
         mockMvc.perform(put("/stubs/user")
                 .content("{\"name\":\"user1\",\"password\":\"123456\",\"age\":15}"))
                 .andExpect(status().isNotFound());
@@ -90,7 +98,8 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_ok_when_receive_valid_http_delete_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq("")))
+        Request request = new Request("DELETE", "/stubs/user/name", newHashSet(), newHashSet(), "");
+        when(restStubService.handleRequest(eq(request)))
                 .thenReturn(new Response("", HttpStatus.OK));
         mockMvc.perform(delete("/stubs/user/name"))
                 .andExpect(status().isOk());
@@ -98,7 +107,8 @@ public class RestStubControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_receive_invalid_http_delete_request() throws Exception {
-        when(restStubService.handleRequest(Mockito.any(), eq(""))).thenReturn(null);
+        Request request = new Request("DELETE", "/stubs/user", newHashSet(), newHashSet(), "");
+        when(restStubService.handleRequest(eq((request)))).thenReturn(null);
         mockMvc.perform(delete("/stubs/user"))
                 .andExpect(status().isNotFound());
     }

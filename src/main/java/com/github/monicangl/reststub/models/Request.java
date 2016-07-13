@@ -18,4 +18,15 @@ public class Request {
         this.requestBody = this.requestBody.replace(" ", "");
         this.requestBody = this.requestBody.replace("\n", "");
     }
+
+    public boolean equals(Object object) {
+        Request other = (Request)object;
+        return this.method.equals(other.method)
+                && this.contextPath.equals(other.contextPath)
+                && this.parameters.equals(other.parameters)
+                && this.headers.equals(other.headers)
+                && this.requestBody.equals(other.requestBody);
+    }
+
+
 }

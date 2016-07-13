@@ -2,6 +2,7 @@ package com.github.monicangl.reststub.controller;
 
 import com.github.monicangl.reststub.models.Response;
 import com.github.monicangl.reststub.services.RestStubService;
+import com.github.monicangl.reststub.services.ServletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class RestStubController {
 
     @RequestMapping(value = "/**", method = {RequestMethod.POST, RequestMethod.PUT})
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest, @RequestBody String body) {
-        Response response = restStubService.handleRequest(httpServletRequest, body);
+        Response response = restStubService.handleRequest(ServletService.getRequest(httpServletRequest, body));
         if (null == response) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -37,7 +38,7 @@ public class RestStubController {
 
     @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.DELETE})
     public ResponseEntity<String> handleRequest(HttpServletRequest httpServletRequest) {
-        Response response = restStubService.handleRequest(httpServletRequest, "");
+        Response response = restStubService.handleRequest(ServletService.getRequest(httpServletRequest, ""));
         if (null == response) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

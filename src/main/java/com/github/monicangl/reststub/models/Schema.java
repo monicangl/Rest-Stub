@@ -18,6 +18,14 @@ public class Schema {
     @GeneratedValue
     private Long id;
 
+    public void setHeaders(Set<RequestHeader> headers) {
+        this.headers = headers;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Set<RequestParameter> getParameters() {
         return parameters;
     }
@@ -49,11 +57,6 @@ public class Schema {
     public String getResponseBody() {
         return responseBody;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String method;
     public String contextPath;
     public String requestBody;
