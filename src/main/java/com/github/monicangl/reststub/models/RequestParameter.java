@@ -5,14 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class RequestParameter {
-    @JsonIgnore
-    @ManyToOne
-    private Schema schema;
-
     @Id
     @GeneratedValue
     @JsonIgnore
@@ -21,8 +16,7 @@ public class RequestParameter {
     RequestParameter() { // jpa only
     }
 
-    public RequestParameter(Schema schema, String name, String value) {
-        this.schema = schema;
+    public RequestParameter(String name, String value) {
         this.name = name;
         this.value = value;
     }
@@ -32,10 +26,6 @@ public class RequestParameter {
 
     public Long getId() {
         return id;
-    }
-
-    public Schema getSchema() {
-        return schema;
     }
 
     public String getName() {

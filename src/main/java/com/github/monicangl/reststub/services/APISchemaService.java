@@ -1,11 +1,7 @@
 package com.github.monicangl.reststub.services;
 
 import com.github.monicangl.reststub.models.Schema;
-import com.github.monicangl.reststub.models.RequestHeader;
-import com.github.monicangl.reststub.models.RequestParameter;
 import com.github.monicangl.reststub.repositories.SchemaRepository;
-import com.github.monicangl.reststub.repositories.RequestHeaderRepository;
-import com.github.monicangl.reststub.repositories.RequestParameterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,28 +12,22 @@ import java.util.List;
 @Service
 @Transactional
 public class APISchemaService {
-    private final SchemaRepository apiSchemaRepository;
-    private final RequestParameterRepository requestParameterRepository;
-    private final RequestHeaderRepository requestHeaderRepository;
+    private final SchemaRepository schemaRepository;
 
     @Autowired
-    public APISchemaService(SchemaRepository apiSchemaRepository
-            , RequestParameterRepository requestParameterRepository
-            , RequestHeaderRepository requestHeaderRepository) {
-        this.apiSchemaRepository = apiSchemaRepository;
-        this.requestParameterRepository = requestParameterRepository;
-        this.requestHeaderRepository = requestHeaderRepository;
+    public APISchemaService(SchemaRepository schemaRepository) {
+        this.schemaRepository = schemaRepository;
     }
 
     public List<Schema> getAll() {
-        return apiSchemaRepository.findAll();
+        return schemaRepository.findAll();
     }
 
     public Schema get(Long id) {
-        if (!apiSchemaRepository.exists(id)) {
+        if (!schemaRepository.exists(id)) {
             throw new InvalidRequestException("Invalid request: get a non existed schema");
         }
-        return apiSchemaRepository.findOne(id);
+        return schemaRepository.findOne(id);
     }
 
     public void create(Schema schema) {
@@ -46,23 +36,23 @@ public class APISchemaService {
         }
         schema.requestBody = schema.requestBody.replace(" ", "");
         schema.requestBody = schema.requestBody.replace("/n", "");
-        addSchema(schema);
+        schemaRepository.save(schema);
     }
 
     public void update(Schema schema) {
-        if (!apiSchemaRepository.exists(schema.getId())) {
+        if (!schemaRepository.exists(schema.getId())) {
             throw new InvalidRequestException("Invalid request: update a non existed schema");
         }
-        delete(schema.getId());
-        addSchema(schema);
+
+        schemaRepository.save(schema);
     }
 
     public void delete(Long id) {
-        apiSchemaRepository.delete(id);
+        schemaRepository.delete(id);
     }
 
     private boolean existing(Schema schema) {
-        Collection<Schema> schemas = apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody);
+        Collection<Schema> schemas = schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody);
         for (Schema apiSchema : schemas) {
             if (apiSchema.getParameters().equals(schema.getParameters())
                     && apiSchema.getHeaders().equals(schema.getHeaders())) {
@@ -70,15 +60,5 @@ public class APISchemaService {
             }
         }
         return false;
-    }
-
-    private void addSchema(Schema schema) {
-        Schema apiSchema = apiSchemaRepository.save(new Schema(schema.method, schema.contextPath, schema.requestBody, schema.responseStatus, schema.responseBody));
-        for (RequestParameter parameter : schema.getParameters()) {
-            requestParameterRepository.save(new RequestParameter(apiSchema, parameter.name, parameter.value));
-        }
-        for (RequestHeader header : schema.getHeaders()) {
-            requestHeaderRepository.save(new RequestHeader(apiSchema, header.name, header.value));
-        }
     }
 }

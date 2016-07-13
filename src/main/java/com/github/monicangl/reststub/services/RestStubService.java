@@ -51,12 +51,12 @@ public class RestStubService {
 
     private Request getRequest(HttpServletRequest httpServletRequest, String body) {
         Set<RequestParameter> parameters = new HashSet<>();
-        parameters.addAll(httpServletRequest.getParameterMap().keySet().stream().map(key -> new RequestParameter(null, key, httpServletRequest.getParameter(key))).collect(Collectors.toList()));
+        parameters.addAll(httpServletRequest.getParameterMap().keySet().stream().map(key -> new RequestParameter(key, httpServletRequest.getParameter(key))).collect(Collectors.toList()));
         Set<RequestHeader> headers = new HashSet<>();
         Enumeration<String> requestHeaders = httpServletRequest.getHeaderNames();
         while (requestHeaders.hasMoreElements()) {
             String key = requestHeaders.nextElement();
-            headers.add(new RequestHeader(null, key, httpServletRequest.getHeader(key)));
+            headers.add(new RequestHeader(key, httpServletRequest.getHeader(key)));
         }
         return new Request(httpServletRequest.getMethod(), httpServletRequest.getRequestURI(), parameters, headers, body);
     }

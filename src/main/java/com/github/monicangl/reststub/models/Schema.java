@@ -8,10 +8,10 @@ import java.util.Set;
 
 @Entity
 public class Schema {
-    @OneToMany(mappedBy = "schema", cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<RequestParameter> parameters = new HashSet<>();
 
-    @OneToMany(mappedBy = "schema", cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<RequestHeader> headers = new HashSet<>();
 
     @Id
@@ -66,15 +66,15 @@ public class Schema {
         this.requestBody = requestBody;
         this.responseStatus = responseStatus;
         this.responseBody = responseBody;
-        this.requestBody = this.requestBody.replace(" ","");
-        this.requestBody = this.requestBody.replace("\n","");
+        this.requestBody = this.requestBody.replace(" ", "");
+        this.requestBody = this.requestBody.replace("\n", "");
     }
 
     Schema() { // jpa only
     }
 
     public boolean equals(Object obj) {
-        Schema other = (Schema)obj;
+        Schema other = (Schema) obj;
         return this.method.equals(other.method)
                 && this.contextPath.compareToIgnoreCase(other.contextPath) == 0
                 && this.requestBody.equals(other.requestBody)

@@ -6,14 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class RequestHeader {
-    @JsonIgnore
-    @ManyToOne
-    private Schema schema;
-
     @Id
     @GeneratedValue
     @JsonIgnore
@@ -22,8 +17,7 @@ public class RequestHeader {
     RequestHeader() { // jpa only
     }
 
-    public RequestHeader(Schema schema, String name, String value) {
-        this.schema = schema;
+    public RequestHeader(String name, String value) {
         this.name = name;
         this.value = value;
     }
@@ -33,10 +27,6 @@ public class RequestHeader {
 
     public Long getId() {
         return id;
-    }
-
-    public Schema getSchema() {
-        return schema;
     }
 
     public String getName() {

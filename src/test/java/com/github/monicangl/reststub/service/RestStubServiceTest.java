@@ -32,7 +32,7 @@ public class RestStubServiceTest {
     public void should_be_able_to_return_right_response_when_handle_a_supported_request() {
         // given
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
-        schema.getHeaders().add(new RequestHeader(schema, "content-type", "application/json"));
+        schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getMethod()).thenReturn("POST");
         when(httpServletRequest.getRequestURI()).thenReturn("/stubs/user");
@@ -63,7 +63,7 @@ public class RestStubServiceTest {
     public void should_be_able_to_return_not_found_when_handle_an_unsupported_request() {
         // given
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
-        schema.getHeaders().add(new RequestHeader(schema, "content-type", "application/json"));
+        schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getMethod()).thenReturn("POST");
         when(httpServletRequest.getRequestURI()).thenReturn("/stubs/user");
