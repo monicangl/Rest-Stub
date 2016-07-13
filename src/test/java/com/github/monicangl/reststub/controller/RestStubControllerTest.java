@@ -111,24 +111,4 @@ public class RestStubControllerTest {
         mockMvc.perform(delete("/stubs/user"))
                 .andExpect(status().isNotFound());
     }
-
-
-
-//    @Test
-//    public void stubGetUser() throws Exception {
-//        APISchema getSchema = new APISchema("GET", "/stubs/user", "", HttpStatus.OK, "{\n    \"name\": \"user1\",\n    \"password\": \"123456\",   \n    \"age\": 10\n}");
-//        getSchema.getParameters().add(new RequestParameter(getSchema, "name", "user1"));
-//        apiSchemaService.add(getSchema);
-//        mockMvc.perform(get("/stubs/user")
-//                .param("name", "user1"))
-//                .andExpect(status().isOk());
-////                .andExpect();
-//    }
-//
-//    protected String json(Object object) throws IOException {
-//        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-//        this.mappingJackson2HttpMessageConverter.write(
-//                object, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-//        return mockHttpOutputMessage.getBodyAsString();
-//    }
 }

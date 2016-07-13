@@ -1,16 +1,16 @@
 package com.github.monicangl.reststub.service;
 
-import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.models.RequestHeader;
+import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.repositories.SchemaRepository;
 import com.github.monicangl.reststub.services.RestStubService;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -21,12 +21,16 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 public class RestStubServiceTest {
     @Mock
     private SchemaRepository apiSchemaRepository;
     @InjectMocks
     private RestStubService restStubService;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void should_be_able_to_return_right_response_when_handle_a_supported_request() {
