@@ -49,14 +49,13 @@ public class SchemaController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<String> add(@RequestBody Schema schema) {
+    public ResponseEntity<String> create(@RequestBody Schema schema) {
         try {
-            schemaService.create(schema);
+            return new ResponseEntity<>("Id of created schema is " + schemaService.create(schema).toString(), HttpStatus.CREATED);
         }
         catch (BadRequestException exception) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.PUT)

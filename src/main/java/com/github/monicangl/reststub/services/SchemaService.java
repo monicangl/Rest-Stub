@@ -33,13 +33,13 @@ public class SchemaService {
         return schemaRepository.findOne(id);
     }
 
-    public void create(Schema schema) {
+    public Long create(Schema schema) {
         if (existing(schema)) {
             throw new BadRequestException("Create a existent schema");
         }
         schema.requestBody = schema.requestBody.replace(" ", "");
         schema.requestBody = schema.requestBody.replace("/n", "");
-        schemaRepository.save(schema);
+        return schemaRepository.save(schema).getId();
     }
 
     public void update(Schema schema) {
