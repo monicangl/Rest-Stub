@@ -2,9 +2,9 @@ package com.github.monicangl.reststub.controller;
 
 import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.services.APISchemaService;
-import com.github.monicangl.reststub.services.InvalidRequestException;
+import com.github.monicangl.reststub.services.exception.BadRequestException;
+import com.github.monicangl.reststub.services.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +31,7 @@ public class SchemaController {
         try {
             return new ResponseEntity<>(apiSchemaService.get(id), HttpStatus.OK);
         }
-        catch (InvalidRequestException exception) {
+        catch (NotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -41,7 +41,7 @@ public class SchemaController {
         try {
             apiSchemaService.delete(id);
         }
-        catch (EmptyResultDataAccessException exception) {
+        catch (BadRequestException exception) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -53,7 +53,7 @@ public class SchemaController {
         try {
             apiSchemaService.create(schema);
         }
-        catch (InvalidRequestException exception) {
+        catch (BadRequestException exception) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -64,7 +64,7 @@ public class SchemaController {
         try {
             apiSchemaService.update(schema);
         }
-        catch (InvalidRequestException exception) {
+        catch (BadRequestException exception) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);

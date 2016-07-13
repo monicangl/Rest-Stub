@@ -1,18 +1,18 @@
 package com.github.monicangl.reststub.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.models.RequestHeader;
 import com.github.monicangl.reststub.models.RequestParameter;
+import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.services.APISchemaService;
-import com.github.monicangl.reststub.services.InvalidRequestException;
+import com.github.monicangl.reststub.services.exception.BadRequestException;
+import com.github.monicangl.reststub.services.exception.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -96,7 +96,7 @@ public class SchemaControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_get_a_non_existent_schema() throws Exception {
-        when(apiSchemaService.get(3L)).thenThrow(new InvalidRequestException(""));
+        when(apiSchemaService.get(3L)).thenThrow(new NotFoundException(""));
         mockMvc.perform(get("/schema/3"))
                 .andExpect(status().isNotFound());
     }
@@ -115,7 +115,7 @@ public class SchemaControllerTest {
     public void should_be_able_return_bad_request_when_add_an_existent_schema() throws Exception {
         Schema postSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        doThrow(new InvalidRequestException("")).when(apiSchemaService).create(Mockito.any());
+        doThrow(new BadRequestException("")).when(apiSchemaService).create(Mockito.any());
         mockMvc.perform(post("/schema")
                 .header("content-type", "application/json")
                 .content(json(postSchema)))
@@ -136,7 +136,7 @@ public class SchemaControllerTest {
     public void should_be_able_return_bad_request_when_update_an_non_existent_schema() throws Exception {
         Schema postSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        doThrow(new InvalidRequestException("")).when(apiSchemaService).update(Mockito.any());
+        doThrow(new BadRequestException("")).when(apiSchemaService).update(Mockito.any());
         mockMvc.perform(put("/schema")
                 .header("content-type", "application/json")
                 .content(json(postSchema)))
@@ -150,8 +150,8 @@ public class SchemaControllerTest {
     }
 
     @Test
-    public void should_be_able_return_not_found_when_delete_a_non_existent_schema() throws Exception {
-        doThrow(new EmptyResultDataAccessException(3)).when(apiSchemaService).delete(3L);
+    public void should_be_able_return_bad_request_when_delete_a_non_existent_schema() throws Exception {
+        doThrow(new BadRequestException("")).when(apiSchemaService).delete(3L);
         mockMvc.perform(delete("/schema/3")
                 .header("content-type", "application/json"))
                 .andExpect(status().isBadRequest());

@@ -1,11 +1,11 @@
 package com.github.monicangl.reststub.service;
 
 import com.github.monicangl.reststub.models.RequestHeader;
-import com.github.monicangl.reststub.models.RequestParameter;
 import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.repositories.SchemaRepository;
 import com.github.monicangl.reststub.services.APISchemaService;
-import com.github.monicangl.reststub.services.InvalidRequestException;
+import com.github.monicangl.reststub.services.exception.BadRequestException;
+import com.github.monicangl.reststub.services.exception.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -38,15 +38,13 @@ public class SchemaServiceTest {
         // given
         Schema postSchema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        Schema getSchema = new Schema("GET", "/stubs/user", "", HttpStatus.OK, "{\"name\": \"user1\",\"password\": \"123456\",\"age\": 10}");
-        getSchema.getParameters().add(new RequestParameter("name", "user1"));
-        when(apiSchemaRepository.findAll()).thenReturn(newArrayList(postSchema, getSchema));
+        when(apiSchemaRepository.findAll()).thenReturn(newArrayList(postSchema));
 
         // when
         List<Schema> schemas = apiSchemaService.getAll();
 
         // then
-        assertThat(schemas.size(), is(2));
+        assertThat(schemas.size(), is(1));
     }
 
     @Test
@@ -70,8 +68,8 @@ public class SchemaServiceTest {
         assertThat(schema.getResponseStatus(), is(HttpStatus.CREATED));
     }
 
-    @Test(expected = InvalidRequestException.class)
-    public void should_be_able_to_raise_exception_when_get_a_non_existent_schema() {
+    @Test(expected = NotFoundException.class)
+    public void should_be_able_to_raise_not_found_exception_when_get_a_non_existent_schema() {
         // given
         when(apiSchemaRepository.exists(1L)).thenReturn(false);
 
@@ -90,8 +88,8 @@ public class SchemaServiceTest {
         apiSchemaService.create(schema);
     }
 
-    @Test(expected = InvalidRequestException.class)
-    public void should_be_able_to_raise_exception_when_create_an_existent_schema() {
+    @Test(expected = BadRequestException.class)
+    public void should_be_able_to_raise_bad_request_exception_when_create_an_existent_schema() {
         // given
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
@@ -113,8 +111,8 @@ public class SchemaServiceTest {
         apiSchemaService.update(schema);
     }
 
-    @Test(expected = InvalidRequestException.class)
-    public void should_be_able_to_raise_exception_when_update_a_non_existent_schema() {
+    @Test(expected = BadRequestException.class)
+    public void should_be_able_to_raise_bad_request_exception_when_update_a_non_existent_schema() {
         // given
         Schema schema = new Schema("POST", "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.getHeaders().add(new RequestHeader("content-type", "application/json"));
@@ -133,8 +131,8 @@ public class SchemaServiceTest {
         apiSchemaService.delete(1L);
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
-    public void should_be_able_to_raise_exception_when_delete_a_non_existent_schema() {
+    @Test(expected = BadRequestException.class)
+    public void should_be_able_to_raise_bad_request_exception_when_delete_a_non_existent_schema() {
         // given
         doThrow(new EmptyResultDataAccessException(1)).when(apiSchemaRepository).delete(1L);
 
