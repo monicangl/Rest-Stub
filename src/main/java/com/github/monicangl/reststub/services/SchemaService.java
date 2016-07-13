@@ -46,8 +46,22 @@ public class SchemaService {
         if (!schemaRepository.exists(schema.getId())) {
             throw new BadRequestException("Update a non existent schema");
         }
-
+        if (existingSame(schema)) {
+            throw new BadRequestException("Update a existent schema same to another existent schema");
+        }
         schemaRepository.save(schema);
+    }
+
+    private boolean existingSame(Schema schema) {
+        Collection<Schema> schemas = schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(schema.method, schema.contextPath, schema.requestBody);
+        for (Schema anSchema : schemas) {
+            if (!anSchema.getId().equals(schema.getId())
+                    && anSchema.getParameters().equals(schema.getParameters())
+                    && anSchema.getHeaders().equals(schema.getHeaders())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void delete(Long id) {
