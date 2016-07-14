@@ -32,7 +32,7 @@ public class SchemaController {
         if (schema.isPresent()) {
             return new ResponseEntity<>(schema.get(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Schema with id " + id + "is not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Schema with id " + id + " is not found", HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

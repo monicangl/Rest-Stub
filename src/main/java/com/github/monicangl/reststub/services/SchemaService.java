@@ -41,7 +41,7 @@ public class SchemaService {
 
     public void update(Schema schema) {
         if (!schemaRepository.exists(schema.getId())) {
-            throw new BadRequestException("Schema with id" + schema.getId() + "is not existent");
+            throw new BadRequestException("Schema with id " + schema.getId() + " is not existent");
         }
         if (existingSame(schema)) {
             throw new BadRequestException("Can not update a existent schema to have the same request with an existent schema");
@@ -66,7 +66,7 @@ public class SchemaService {
             schemaRepository.delete(id);
         }
         catch (EmptyResultDataAccessException exception) {
-            throw new BadRequestException("Schema with id " + id + "is not existent");
+            throw new BadRequestException("Schema with id " + id + " is not existent");
         }
     }
 
