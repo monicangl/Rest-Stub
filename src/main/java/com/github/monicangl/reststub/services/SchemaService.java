@@ -32,12 +32,12 @@ public class SchemaService {
         if (schema.isPresent()){
             return schema.get();
         }
-        throw new NotFoundException("Requested schema is not found");
+        throw new NotFoundException("Schema with id " + id + "is not found");
     }
 
     public Long create(Schema schema) {
         if (existing(schema)) {
-            throw new BadRequestException("Create a existent schema");
+            throw new BadRequestException("Can not create a schema having the same request with an existent schema");
         }
         schema.requestBody = schema.requestBody.replace(" ", "");
         schema.requestBody = schema.requestBody.replace("/n", "");
@@ -46,10 +46,10 @@ public class SchemaService {
 
     public void update(Schema schema) {
         if (!schemaRepository.exists(schema.getId())) {
-            throw new BadRequestException("Update a non existent schema");
+            throw new BadRequestException("Schema with id" + schema.getId() + "is not existent");
         }
         if (existingSame(schema)) {
-            throw new BadRequestException("Update a existent schema same to another existent schema");
+            throw new BadRequestException("Can not update a existent schema to have the same request with an existent schema");
         }
         schemaRepository.save(schema);
     }
@@ -71,7 +71,7 @@ public class SchemaService {
             schemaRepository.delete(id);
         }
         catch (EmptyResultDataAccessException exception) {
-            throw new BadRequestException("Delete a non existent schema");
+            throw new BadRequestException("Schema with id " + id + "is not existent");
         }
     }
 

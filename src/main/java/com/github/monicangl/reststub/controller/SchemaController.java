@@ -27,12 +27,12 @@ public class SchemaController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Schema> get(@PathVariable Long id) {
+    public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(schemaService.get(id), HttpStatus.OK);
         }
         catch (NotFoundException exception) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -42,7 +42,7 @@ public class SchemaController {
             schemaService.delete(id);
         }
         catch (BadRequestException exception) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
 
@@ -54,7 +54,7 @@ public class SchemaController {
             return new ResponseEntity<>("Id of created schema is " + schemaService.create(schema).toString(), HttpStatus.CREATED);
         }
         catch (BadRequestException exception) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -64,7 +64,7 @@ public class SchemaController {
             schemaService.update(schema);
         }
         catch (BadRequestException exception) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
