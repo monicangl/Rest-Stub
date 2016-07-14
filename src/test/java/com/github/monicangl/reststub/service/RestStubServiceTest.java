@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -33,7 +34,7 @@ public class RestStubServiceTest {
     }
 
     @Test
-    public void should_be_able_to_return_right_response_when_handle_a_supported_request() {
+    public void should_be_able_to_return_present_optional_of_response_when_handle_a_supported_request() {
         // given
         Set<RequestHeader> headers = newHashSet(new RequestHeader("content-type", "application/json"));
         Schema schema = new Schema(HttpMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
@@ -44,23 +45,24 @@ public class RestStubServiceTest {
                 .thenReturn(newHashSet(schema));
 
         // when
-        Response response = restStubService.handleRequest(request);
+        Optional<Response> response = restStubService.handleRequest(request);
 
         // then
-        assertThat(response.responseBody, is(schema.getResponseBody()));
-        assertThat(response.responseStatus, is(schema.getResponseStatus()));
+        assertThat(response.isPresent(), is(true));
+        assertThat(response.get().responseBody, is(schema.getResponseBody()));
+        assertThat(response.get().responseStatus, is(schema.getResponseStatus()));
     }
 
     @Test
-    public void should_be_able_to_return_not_found_when_handle_an_unsupported_request() {
+    public void should_be_able_to_return_empty_optional_of_response_when_handle_an_unsupported_request() {
         // given
         Request request = new Request(HttpMethod.POST, "/stubs/user", newHashSet(), newHashSet(), "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
         when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(
                 request.method, request.contextPath, request.requestBody)).thenReturn(newHashSet());
         // when
-        Response response = restStubService.handleRequest(request);
+        Optional<Response> response = restStubService.handleRequest(request);
 
         // then
-//        assertThat(response, isNull());
+        assertThat(response.isPresent(), is(false));
     }
 }

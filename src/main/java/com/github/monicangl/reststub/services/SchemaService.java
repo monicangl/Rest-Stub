@@ -3,7 +3,6 @@ package com.github.monicangl.reststub.services;
 import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.repositories.SchemaRepository;
 import com.github.monicangl.reststub.services.exception.BadRequestException;
-import com.github.monicangl.reststub.services.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -27,12 +26,8 @@ public class SchemaService {
         return schemaRepository.findAll();
     }
 
-    public Schema get(Long id) {
-        Optional<Schema> schema = Optional.ofNullable(schemaRepository.findOne(id));
-        if (schema.isPresent()){
-            return schema.get();
-        }
-        throw new NotFoundException("Schema with id " + id + "is not found");
+    public Optional<Schema> get(Long id) {
+        return Optional.ofNullable(schemaRepository.findOne(id));
     }
 
     public Long create(Schema schema) {

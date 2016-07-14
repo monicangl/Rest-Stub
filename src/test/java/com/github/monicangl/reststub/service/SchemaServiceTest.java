@@ -5,7 +5,6 @@ import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.repositories.SchemaRepository;
 import com.github.monicangl.reststub.services.SchemaService;
 import com.github.monicangl.reststub.services.exception.BadRequestException;
-import com.github.monicangl.reststub.services.exception.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
@@ -56,9 +56,10 @@ public class SchemaServiceTest {
         when(schemaRepository.findOne(1L)).thenReturn(postSchema);
 
         // when
-        Schema schema = schemaService.get(1L);
+        Schema schema = schemaService.get(1L).orElse(null);
 
         // then
+//        assertThat(schema, isNotNull());
         assertThat(schema.getMethod(), is(HttpMethod.POST));
         assertThat(schema.getContextPath(), is("/stubs/user"));
         assertThat(schema.getParameters(), is(newHashSet()));
@@ -68,13 +69,16 @@ public class SchemaServiceTest {
         assertThat(schema.getResponseStatus(), is(HttpStatus.CREATED));
     }
 
-    @Test(expected = NotFoundException.class)
-    public void should_be_able_to_raise_not_found_exception_when_get_a_non_existent_schema() {
+    @Test
+    public void should_be_able_to_return_empty_optional_of_schema_when_get_a_non_existent_schema() {
         // given
         when(schemaRepository.findOne(1L)).thenReturn(null);
 
         // when
-        schemaService.get(1L);
+        Optional schema = schemaService.get(1L);
+
+        // then
+        assertThat(schema.isPresent(), is(false));
     }
 
     @Test

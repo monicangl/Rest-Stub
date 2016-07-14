@@ -6,7 +6,6 @@ import com.github.monicangl.reststub.models.RequestParameter;
 import com.github.monicangl.reststub.models.Schema;
 import com.github.monicangl.reststub.services.SchemaService;
 import com.github.monicangl.reststub.services.exception.BadRequestException;
-import com.github.monicangl.reststub.services.exception.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -78,7 +78,7 @@ public class SchemaControllerTest {
     public void should_be_able_to_get_the_existent_schema() throws Exception {
         Schema postSchema = new Schema(HttpMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         postSchema.getHeaders().add(new RequestHeader("content-type", "application/json"));
-        when(schemaService.get(1L)).thenReturn(postSchema);
+        when(schemaService.get(1L)).thenReturn(Optional.of(postSchema));
         mockMvc.perform(get("/schema/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -96,7 +96,7 @@ public class SchemaControllerTest {
 
     @Test
     public void should_be_able_to_return_not_found_when_get_a_non_existent_schema() throws Exception {
-        when(schemaService.get(3L)).thenThrow(new NotFoundException(""));
+        when(schemaService.get(3L)).thenReturn(Optional.empty());
         mockMvc.perform(get("/schema/3"))
                 .andExpect(status().isNotFound());
     }

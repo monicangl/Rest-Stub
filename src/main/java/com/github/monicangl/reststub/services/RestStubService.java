@@ -19,23 +19,23 @@ public class RestStubService {
         this.apiSchemaRepository = apiSchemaRepository;
     }
 
-    public Response handleRequest(Request request) {
-        Optional<Schema> schema = Optional.ofNullable(getSchema(request));
+    public Optional<Response> handleRequest(Request request) {
+        Optional<Schema> schema = getSchema(request);
         if (schema.isPresent()) {
-            return new Response(schema.get().getResponseBody(), schema.get().getResponseStatus());
+            return Optional.of(new Response(schema.get().getResponseBody(), schema.get().getResponseStatus()));
         }
-        return null;
+        return Optional.empty();
     }
 
-    private Schema getSchema(Request request) {
+    private Optional<Schema> getSchema(Request request) {
         Set<Schema> schemas = apiSchemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(request.method, request.contextPath, request.requestBody);
         for (Schema schema : schemas) {
             if (schema.getParameters().equals(request.parameters)) {
                 if (request.headers.containsAll(schema.getHeaders())) {
-                    return schema;
+                    return Optional.of(schema);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 }
