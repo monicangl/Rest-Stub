@@ -1,7 +1,7 @@
 package com.github.monicangl.reststub.models;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ public class Schema {
         return id;
     }
 
-    public RequestMethod getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 
@@ -58,13 +58,13 @@ public class Schema {
     public String getResponseBody() {
         return responseBody;
     }
-    public RequestMethod method;
+    public HttpMethod method;
     public String contextPath;
     public String requestBody;
     public HttpStatus responseStatus;
     public String responseBody;
 
-    public Schema(RequestMethod method, String contextPath, String requestBody, HttpStatus responseStatus, String responseBody) {
+    public Schema(HttpMethod method, String contextPath, String requestBody, HttpStatus responseStatus, String responseBody) {
         this.method = method;
         this.contextPath = contextPath;
         this.requestBody = requestBody;

@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -60,7 +60,7 @@ public class ServletServiceTest {
         Request request = servletService.getRequest(httpServletRequest, requestBody);
 
         // then
-        assertThat(request.method, is(RequestMethod.POST));
+        assertThat(request.method, is(HttpMethod.POST));
         assertThat(request.contextPath, is("/stubs/user"));
         assertThat(request.parameters, is(newHashSet(new RequestParameter("name", "user1"))));
         assertThat(request.headers, is(newHashSet(new RequestHeader("content-type", "application/json"))));

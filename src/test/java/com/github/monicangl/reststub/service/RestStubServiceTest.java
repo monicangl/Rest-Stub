@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Set;
 
@@ -36,9 +36,9 @@ public class RestStubServiceTest {
     public void should_be_able_to_return_right_response_when_handle_a_supported_request() {
         // given
         Set<RequestHeader> headers = newHashSet(new RequestHeader("content-type", "application/json"));
-        Schema schema = new Schema(RequestMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
+        Schema schema = new Schema(HttpMethod.POST, "/stubs/user", "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}", HttpStatus.CREATED, "");
         schema.setHeaders(headers);
-        Request request = new Request(RequestMethod.POST, "/stubs/user", newHashSet(), headers, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        Request request = new Request(HttpMethod.POST, "/stubs/user", newHashSet(), headers, "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
         when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(
                 request.method, request.contextPath, request.requestBody))
                 .thenReturn(newHashSet(schema));
@@ -54,7 +54,7 @@ public class RestStubServiceTest {
     @Test
     public void should_be_able_to_return_not_found_when_handle_an_unsupported_request() {
         // given
-        Request request = new Request(RequestMethod.POST, "/stubs/user", newHashSet(), newHashSet(), "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
+        Request request = new Request(HttpMethod.POST, "/stubs/user", newHashSet(), newHashSet(), "{\"name\":\"user1\",\"password\":\"123456\",\"age\":10}");
         when(schemaRepository.findByMethodAndContextPathIgnoringCaseAndRequestBody(
                 request.method, request.contextPath, request.requestBody)).thenReturn(newHashSet());
         // when

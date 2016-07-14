@@ -1,17 +1,17 @@
 package com.github.monicangl.reststub.models;
 
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.http.HttpMethod;
 
 import java.util.Set;
 
 public class Request {
-    public RequestMethod method;
+    public HttpMethod method;
     public String contextPath;
     public Set<RequestParameter> parameters;
     public Set<RequestHeader> headers;
     public String requestBody;
 
-    public Request(RequestMethod method, String contextPath, Set<RequestParameter> parameters, Set<RequestHeader> headers, String requestBody) {
+    public Request(HttpMethod method, String contextPath, Set<RequestParameter> parameters, Set<RequestHeader> headers, String requestBody) {
         this.method = method;
         this.contextPath = contextPath;
         this.parameters = parameters;
